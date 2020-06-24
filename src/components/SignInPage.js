@@ -51,13 +51,13 @@ export default function SignInPage(props) {
                     <div className='errors'>
                         <div>{errors.name}</div>
                     </div>
-                    <label>Enter your E-mail:&nbsp;
+                    <label>Enter your Username:&nbsp;
                     <Input
-                            value={values.email}
+                            value={values.username}
                             onChange={onInputChange}
                             type='text'
-                            placeholder='E-Mail'
-                            name='email'
+                            placeholder='Username'
+                            name='username'
                         >
                         </Input>
                     </label>

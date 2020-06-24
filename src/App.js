@@ -3,18 +3,23 @@ import './App.css';
 import { Route, Switch } from 'react-router-dom'
 import axios from 'axios';
 import * as Yup from 'yup'
+import { useHistory } from 'react-router-dom'
+
 import formSchema from './validation/formSchema'
 import formSchemaK from './validation/formSchemaK'
+import formSchemaClass from './validation/formSchemaClass'
 
 import Nav from './components/Nav'
 import Home from './components/Home'
 import SignInPage from './components/SignInPage'
 import SignUpPage from './components/SignUpPage'
 import Directory from './components/Directory'
+import CreateClass from './components/CreateClass'
 
 //////////////// Initial Values ////////////////
 const initialValues = {
   name: '',
+  username: '',
   email: '',
   password: '',
   role: ''
@@ -22,19 +27,43 @@ const initialValues = {
 
 const initialFormErrors = {
   name: '',
+  username: '',
   email: '',
   password: '',
   role: ''
 }
 
-const initialValuesK = {
-  name: '',
-  password: '',
+const initialClassValues = {
+  class_name: '',
+  instructor_name: '',
+  class_type: '',
+  date_time: '',
+  duration: null, //must be a number and not a string,
+  intensity_level: '',
+  location: '', //any address as a string
+  current_members: null, //must be a number and not a string
+  max_members: null, //must be a number and not a string
+}
 
+const initialClassErrors = {
+  class_name: '',
+  instructor_name: '',
+  class_type: '',
+  date_time: '',
+  duration: null, //must be a number and not a string,
+  intensity_level: '',
+  location: '', //any address as a string
+  current_members: null, //must be a number and not a string
+  max_members: null, //must be a number and not a string
+}
+
+const initialValuesK = {
+  username: '',
+  password: '',
 }
 
 const initialFormErrorsK = {
-  name: '',
+  username: '',
   password: '',
 }
 
@@ -52,25 +81,20 @@ function App() {
   const [formErrors, setFormErrors] = useState(initialFormErrors);
   const [disabled, setDisabled] = useState(initialDisabled);
   const [classes, setClasses] = useState(initialClasses)
+  const [classValues, setClassValues] = useState(initialClassValues)
+  const [classErrors, setClassErrors] = useState(initialClassErrors)
 
+
+  const history = useHistory()
   //////////////// HELPERS ////////////////
   const getClasses = () => {
-    axios.get('/')
+    axios.get('https://bw-anywhere-fitness-be.herokuapp.com/api/users/classes/')
       .then(res => {
-        setClasses(res.data.classes)
+        setClasses(res.data)
+        console.log(res.data)
       })
       .catch(err => {
         console.log('the data was not returned', err)
-      })
-  }
-
-  const getUsers = () => {
-    axios.get('/')
-      .then(res => {
-        setUsers(res.data)
-      })
-      .catch(err => {
-        debugger
       })
   }
 
@@ -84,6 +108,16 @@ function App() {
       })
       .finally(() => {
         setFormValues(initialValues)
+      })
+  }
+
+  const postNewClass = newClass => {
+    axios.post('https://bw-anywhere-fitness-be.herokuapp.com/api/instructor/classes/', newClass)
+      .then(res => {
+        setUsers([...classes, res.data])
+      })
+      .catch(err => {
+        debugger
       })
   }
   //////////////// EVENT HANDLERS ////////////////
@@ -110,6 +144,45 @@ function App() {
     })
   }
 
+  const onInputChangeClass = evt => {
+    const { name, value } = evt.target
+    Yup
+      .reach(formSchemaClass, name)
+      .validate(value)
+      .then(valid => {
+        setClassErrors({
+          ...classErrors,
+          [name]: ""
+        })
+      })
+      .catch(err => {
+        setClassErrors({
+          ...classErrors,
+          [name]: err.errors[0]
+        })
+      })
+    setClassValues({
+      ...classValues,
+      [name]: value
+    })
+  }
+
+  const onSubmitClass = evt => {
+    evt.preventDefault()
+    const newClass = {
+      class_name: classes.class_name,
+      instructor_name: classes.instructor_name,
+      class_type: classes.class_type,
+      date_time: classes.date_time,
+      duration: classes.duration,
+      intensity_level: classes.intensity_level,
+      location: classes.location,
+      current_members: classes.current_members,
+      max_members: classes.max_members,
+    }
+    postNewClass(newClass)
+  }
+
   const onSubmit = evt => {
     evt.preventDefault()
 
@@ -123,9 +196,9 @@ function App() {
   }
   //////////////// SIDE EFFECTS //////////////// 
   useEffect(() => {
-    getUsers()
+    getClasses()
   }, [])
-
+  console.log(classes)
   useEffect(() => {
     formSchema.isValid(formValues).then(valid => {
       setDisabled(!valid);
@@ -133,10 +206,9 @@ function App() {
   }, [formValues])
 
   //////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////
 
-  //////////////// State ////////////////
+
+  //////////////// State (for logins) ////////////////
   const [usersK, setUsersK] = useState(initialUsersK);
   const [formValuesK, setFormValuesK] = useState(initialValuesK);
   const [formErrorsK, setFormErrorsK] = useState(initialFormErrorsK);
@@ -144,27 +216,19 @@ function App() {
 
   ////////////// HELPERS ////////////////
 
-  const getUsersK = () => {
-    axios.get('/')
-      .then(res => {
-        setUsersK(res.data)
-      })
-      .catch(err => {
-        debugger
-      })
-  }
-
-  const postNewUserK = newUserK => {
+  const logInUser = newUserK => {
     axios.post('https://bw-anywhere-fitness-be.herokuapp.com/api/auth/login', newUserK)
       .then(res => {
-        setUsers([...usersK, res.data])
+        console.log(res.data)
+        setUsersK([...usersK, res.data])
+        localStorage.setItem('token', res.data.token)
+        history.push('/directory')
       })
       .catch(err => {
         debugger
       })
       .finally(() => {
         setFormValues(initialValuesK)
-
       })
   }
   //////////////// EVENT HANDLERS ////////////////
@@ -195,16 +259,13 @@ function App() {
     evt.preventDefault()
 
     const newUserK = {
-      name: formValuesK.name.trim(),
+      username: formValuesK.username.trim(),
       password: formValuesK.password.trim(),
 
     }
-    postNewUserK(newUserK)
+    logInUser(newUserK)
   }
   //////////////// SIDE EFFECTS //////////////// 
-  useEffect(() => {
-    getUsersK()
-  }, [])
 
   useEffect(() => {
     formSchemaK.isValid(formValuesK).then(valid => {
@@ -213,6 +274,7 @@ function App() {
   }, [formValuesK])
   return (
     < div >
+
       <Nav />
       <Switch>
         <Route path='/SignUp'>
@@ -235,9 +297,19 @@ function App() {
         </Route>
         <Route path='/directory'>
           <Directory
+            onInputChange={onInputChangeClass}
+            onSubmitClass={onSubmitClass}
             classes={classes}
             instructors={users}
-            clients={usersK} />
+            clients={usersK}
+          />
+          <CreateClass
+            values={classValues}
+            onInputChange={onInputChangeClass}
+            onSubmit={onSubmitClass}
+            classes={classes}
+            errors={classErrors}
+          />
         </Route>
         <Route path='/'>
           <Home />

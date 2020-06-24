@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 const formSchemaK = Yup.object().shape({
-    name: Yup
+    username: Yup
         .string()
         .min(3, "Usermame must be at least 3 characters long.")
         .required("Name is Required"),

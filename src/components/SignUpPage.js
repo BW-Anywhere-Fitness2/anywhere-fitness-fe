@@ -54,31 +54,43 @@ export default function SignUpPage(props) {
                     >
                         <div className='errors'>
                             <div>{errors.name}</div>
-                            <div>{errors.email}</div>
-                            <div>{errors.password}</div>
-                            <div>{errors.role}</div>
                         </div>
                         <label>Enter your name:&nbsp;
-                        <Input
+                            <Input
                                 value={values.name}
                                 onChange={onInputChange}
                                 type='text'
                                 placeholder='Name'
                                 name='name'
-                            >
-
-                            </Input>
+                            />
                         </label>
+                        <div className='errors'>
+                            <div>{errors.name}</div>
+                        </div>
+                        <label>Enter a username:&nbsp;
+                            <Input
+                                value={values.username}
+                                onChange={onInputChange}
+                                type='text'
+                                placeholder='Username'
+                                name='username'
+                            />
+                        </label>
+                        <div className='errors'>
+                            <div>{errors.email}</div>
+                        </div>
                         <label>Enter your E-mail:&nbsp;
-                        <Input
+                            <Input
                                 value={values.email}
                                 onChange={onInputChange}
                                 type='text'
                                 placeholder='Email'
                                 name='email'
-                            >
-                            </Input>
+                            />
                         </label>
+                        <div className='errors'>
+                            <div>{errors.password}</div>
+                        </div>
                         <label>Choose a password:&nbsp;
                             <Input
                                 value={values.password}
@@ -86,9 +98,11 @@ export default function SignUpPage(props) {
                                 type='text'
                                 placeholder='Password'
                                 name='password'
-                            >
-                            </Input>
+                            />
                         </label>
+                        <div className='errors'>
+                            <div>{errors.role}</div>
+                        </div>
                         <label>Select a roll:&nbsp;</label>
                         <select
                             onChange={onInputChange}
@@ -99,7 +113,6 @@ export default function SignUpPage(props) {
                             <option name='client'>Client</option>
                             <option name='instructor'>Instructor</option>
                         </select>
-
                         <Button disabled={disabled}>Submit</Button >
                     </Form>
                 </LoginCard>

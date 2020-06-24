@@ -16,6 +16,7 @@ export default function Directory(props) {
     return (
 
         <div>
+
             <h1>
                 Classes:&nbsp;
             </h1>
@@ -24,27 +25,6 @@ export default function Directory(props) {
                     return (
                         <p> {classes}</p>
 
-                    )
-                })}
-            </div>
-            <h1>
-                Instructors:&nbsp;
-            </h1>
-            <div>
-                {instructors.map(instructor => {
-                    return (
-                        <p>Email: {instructor.email}</p>
-
-                    )
-                })}
-            </div>
-            <h1>
-                Clients:&nbsp;
-            </h1>
-            <div>
-                {clients.map(client => {
-                    return (
-                        <p>Email: {client.email}</p>
                     )
                 })}
             </div>
