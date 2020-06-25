@@ -8,8 +8,10 @@ class Form extends React.Component {
 		super()
         this.state = {
             name: '',
-            age: '',
-            height: ''
+            username: '',
+            email: '',
+            password: '',
+            role: 'Client'
         }
     }
 
@@ -22,9 +24,9 @@ class Form extends React.Component {
     createUser = (evt) => {
         evt.preventDefault()
 
-        const { name, age, height } = this.state
+        const { name, username, email, password, role } = this.state
 
-        this.props.addUser(name, age, height)
+        this.props.addUser(name, username, email, password, role)
             .then(() => {
                 this.props.history.push('/users')
             })
@@ -34,17 +36,36 @@ class Form extends React.Component {
     }
 
     render () {
-        const { name, age, height } = this.state
+        const { name, username, email, password, role } = this.state
         const {fetchingUsers, error} = this.state
 
         return (
             <form onSubmit={this.createUser}>
                 {error && <p className='error'>{error}</p>}
-				<h1>Create New User</h1>
-
+				<h1>Sign Up</h1>
+                <label>
+                Name:
                 <input type="text" name="name" placeholder="Name" value={name} onChange={this.handleChange} />
-				<input type="number" name="age" placeholder="Age" value={age} onChange={this.handleChange} />
-				<input type="text" name="height" placeholder="Height" value={height} onChange={this.handleChange} />
+                </label>
+                <label>
+                Username:
+                <input type="text" name="username" placeholder="username" value={username} onChange={this.handleChange} />
+                </label>
+                <label>
+                Password:
+                <input type="password" name="password" placeholder="password" value={password} onChange={this.handleChange} />
+                </label>
+                <label>
+                Email:
+                <input type="email" name="email" placeholder="Age" value={email} onChange={this.handleChange} />
+                </label>
+                <label>
+                 Role:
+                <select name='role' value={role} onChange={this.handleChange}>
+                <option value='Client'>Client</option>
+                <option value='Instructor'>Instructor</option>
+                </select>
+                </label>
 
 				{fetchingUsers ? <p>Loading...</p> : <button type="submit">Create User</button>}
 			</form>

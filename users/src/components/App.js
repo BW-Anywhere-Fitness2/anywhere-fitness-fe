@@ -1,18 +1,16 @@
-import React, { Component } from 'react';
-import './App.css';
-import Form from './Form'
-import UserListView from './UserListView'
+import React from "react";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import PrivateRoute from '../PrivateRoute';
+import UserListView from './UserListView';
+import SignUpForm from './SignUpForm';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <h1>Anywhere Fitness</h1>
-        <Form />
-        <UserListView />
-      </div>
-    );
-  }
+
+import Login from "../components/Login";
+import "../components/App.css";
+
+function App() {
+  return (
+    <SignUpForm/>
+  );
 }
-
 export default App;
